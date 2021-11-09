@@ -1,0 +1,31 @@
+name: gsheet-hent
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      name:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Print innhold i gsheet'
+        # Input has to be provided for the workflow to run
+        required: false
+
+jobs:
+   fetch:
+      runs-on: ubuntu-latest
+      steps:
+        - id: googlesheet_actions
+          uses: rjoydip/googlesheet-actions@0.1.1
+          with:
+            sheet-id: ${{ secrets.SHEET_ID }}
+        - id: echo
+          uses: actions/github-script@v2
+          with:
+            github-token: ${{secrets.GITHUB_TOKEN}}
+            script: |
+                console.log(${{steps.googlesheet_actions.outputs.result}})
+        - name: test
+          run: |
+            cat $HOME/data.json
